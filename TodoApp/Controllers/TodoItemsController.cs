@@ -25,6 +25,12 @@ namespace TodoApp.Controllers
             return View(await _context.todoItems.ToListAsync());
         }
 
+        // GET: TodoItems
+        public async Task<IActionResult> List()
+        {
+            return View(await _context.todoItems.OrderBy(item => item.Finished).ThenBy(item => item.DueTime).ToListAsync());
+        }
+
         // GET: TodoItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -54,15 +60,52 @@ namespace TodoApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Text,Finished")] TodoItem todoItem)
+        public async Task<IActionResult> Create([Bind("Id,Text,DueTime")] TodoItem todoItem)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(todoItem);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List));
             }
             return View(todoItem);
+        }
+
+        // POST: TodoItems/Finish
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finish([Bind("Id")] TodoItem todoItemId)
+        {
+            if (todoItemId == null || todoItemId.Id == 0)
+            {
+                return NotFound();
+            }
+
+            var todoItem = await _context.todoItems.FindAsync(todoItemId.Id);
+            if (todoItem == null)
+            {
+                return NotFound();
+            }
+
+            todoItem.Finished = !todoItem.Finished;
+            todoItem.FinishedTime = todoItem.Finished ? (DateTime?)DateTime.Now : null;
+            try
+            {
+                _context.Update(todoItem);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TodoItemExists(todoItem.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(List));
         }
 
         // GET: TodoItems/Edit/5
@@ -86,7 +129,7 @@ namespace TodoApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,Finished")] TodoItem todoItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,Finished,FinishedTime,DueTime")] TodoItem todoItem)
         {
             if (id != todoItem.Id)
             {
@@ -111,7 +154,7 @@ namespace TodoApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List));
             }
             return View(todoItem);
         }
@@ -142,7 +185,7 @@ namespace TodoApp.Controllers
             var todoItem = await _context.todoItems.FindAsync(id);
             _context.todoItems.Remove(todoItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
 
         private bool TodoItemExists(int id)

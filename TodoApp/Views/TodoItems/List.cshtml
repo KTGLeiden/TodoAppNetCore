@@ -1,0 +1,55 @@
+﻿@model IEnumerable<TodoApp.Domain.TodoItem>
+
+@{
+    ViewData["Title"] = "Todo items";
+}
+
+@section Scripts {
+    <script>
+        $(document).on('click', 'tr.todoRow', function () {
+            $('#trForm_' + $(this).attr('model-id')).submit();
+        });
+    </script>
+}
+<h1>Todo app!</h1>
+
+<p>
+    <a asp-action="Create">Create New +</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Text)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DueTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr class="todoRow" style="@(item.Finished ? "text-decoration: line-through;" : "")" model-id="@item.Id">
+
+                <td>
+                    @using (Html.BeginForm("Finish", "TodoItems", FormMethod.Post, new { id = "trForm_" + item.Id }))
+                    {
+                        <input type="hidden" name="Id" value="@item.Id" />
+                    }
+                    @Html.DisplayFor(modelItem => item.Text)
+
+                </td>
+                <td>
+                    @(item.Finished ? item.FinishedTime : item.DueTime)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">x</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace TodoApp.Domain
 {
     public class TodoItem
@@ -6,5 +8,7 @@ namespace TodoApp.Domain
         public int Id { get; set; }
         public string Text { get; set; }
         public bool Finished { get; set; }
+        public DateTime? FinishedTime { get; set; }
+        public DateTime? DueTime { get; set; }
     }
 }

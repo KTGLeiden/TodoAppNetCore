@@ -24,6 +24,16 @@
                 </label>
             </div>
             <div class="form-group">
+                <label asp-for="FinishedTime" class="control-label"></label>
+                <input asp-for="FinishedTime" class="form-control" />
+                <span asp-validation-for="FinishedTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueTime" class="control-label"></label>
+                <input asp-for="DueTime" class="form-control" />
+                <span asp-validation-for="DueTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

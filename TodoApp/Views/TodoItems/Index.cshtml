@@ -18,6 +18,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Finished)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinishedTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DueTime)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -29,6 +35,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Finished)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinishedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueTime)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
